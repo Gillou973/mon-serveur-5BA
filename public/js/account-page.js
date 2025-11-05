@@ -115,10 +115,14 @@ async function handleLogin(e) {
 
         if (response.success && response.data && response.data.token) {
             API.setAuthToken(response.data.token);
-            Toast.success('Connexion réussie !');
 
-            await loadUserProfile();
+            // Utiliser directement les données de l'utilisateur retournées par le login
+            currentUser = response.data.user;
+
+            Toast.success('Connexion réussie !');
+            renderUserProfile();
             showAccountSection();
+            showSection('profile');
             form.reset();
         } else {
             Toast.error(response.message || 'Erreur lors de la connexion');
@@ -158,10 +162,14 @@ async function handleRegister(e) {
 
         if (response.success && response.data && response.data.token) {
             API.setAuthToken(response.data.token);
-            Toast.success('Inscription réussie ! Bienvenue !');
 
-            await loadUserProfile();
+            // Utiliser directement les données de l'utilisateur retournées par le register
+            currentUser = response.data.user;
+
+            Toast.success('Inscription réussie ! Bienvenue !');
+            renderUserProfile();
             showAccountSection();
+            showSection('profile');
             form.reset();
         } else {
             Toast.error(response.message || 'Erreur lors de l\'inscription');
@@ -176,7 +184,8 @@ async function handleRegister(e) {
 async function loadUserProfile() {
     try {
         const response = await API.getCurrentUser();
-        currentUser = response.data || response.user || response;
+        // La réponse est { success: true, data: { user: {...} } }
+        currentUser = response.data?.user || response.user || response.data || response;
 
         renderUserProfile();
         showSection('profile');
