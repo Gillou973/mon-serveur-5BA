@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Authentication</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .token-display {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 100px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .user-info {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .user-info p {
+            margin: 5px 0;
+            color: #2e7d32;
+        }
+
+        .response {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .response pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .success {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+
+        .error {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .small-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            margin-top: 10px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .quick-actions button {
+            font-size: 14px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Test API Authentication</h1>
+
+        <!-- Section Authentification -->
+        <div class="grid">
+            <!-- Inscription -->
+            <div class="card">
+                <h2>📝 Inscription</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label>Username:</label>
+                        <input type="text" id="reg_username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="reg_email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password:</label>
+                        <input type="password" id="reg_password" required>
+                        <p class="small-text">Min 6 caractères, 1 majuscule, 1 minuscule, 1 chiffre</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Rôle:</label>
+                        <select id="reg_role">
+                            <option value="user">User</option>
+                            <option value="editor">Editor</option>
+                            <option value="manager">Manager</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <button type="submit">S'inscrire</button>
+                </form>
+                <div id="registerResponse" class="response" style="display:none;"></div>
+            </div>
+
+            <!-- Connexion -->
+            <div class="card">
+                <h2>🔑 Connexion</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="login_email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password:</label>
+                        <input type="password" id="login_password" required>
+                    </div>
+                    <button type="submit">Se connecter</button>
+                </form>
+                <div id="loginResponse" class="response" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- Token et utilisateur connecté -->
+        <div class="grid">
+            <div class="card">
+                <h2>🎫 Token JWT</h2>
+                <div class="token-display" id="tokenDisplay">Aucun token</div>
+                <button onclick="clearToken()" class="logout-btn">Supprimer le token</button>
+            </div>
+
+            <div class="card">
+                <h2>👤 Utilisateur connecté</h2>
+                <div id="userInfo" class="user-info">
+                    <p>Non connecté</p>
+                </div>
+                <button onclick="getMe()">Récupérer mes infos (/api/auth/me)</button>
+                <div id="meResponse" class="response" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- Tests des routes protégées -->
+        <div class="grid">
+            <!-- GET tous les utilisateurs -->
+            <div class="card">
+                <h2>📋 Liste des utilisateurs</h2>
+                <p class="small-text">Requiert: Admin ou Manager</p>
+                <button onclick="getAllUsers()">GET /api/users</button>
+                <div id="usersResponse" class="response" style="display:none;"></div>
+            </div>
+
+            <!-- GET un utilisateur par ID -->
+            <div class="card">
+                <h2>🔍 Voir un utilisateur</h2>
+                <p class="small-text">Requiert: Soi-même ou Admin</p>
+                <div class="form-group">
+                    <label>User ID:</label>
+                    <input type="text" id="getUserId" placeholder="UUID de l'utilisateur">
+                </div>
+                <button onclick="getUserById()">GET /api/users/:id</button>
+                <div id="getUserResponse" class="response" style="display:none;"></div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Modifier un utilisateur -->
+            <div class="card">
+                <h2>✏️ Modifier un utilisateur</h2>
+                <p class="small-text">Requiert: Soi-même ou Admin</p>
+                <div class="form-group">
+                    <label>User ID:</label>
+                    <input type="text" id="updateUserId" placeholder="UUID">
+                </div>
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" id="updateUsername">
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="updateEmail">
+                </div>
+                <div class="form-group">
+                    <label>Prénom:</label>
+                    <input type="text" id="updateFirstName">
+                </div>
+                <div class="form-group">
+                    <label>Nom:</label>
+                    <input type="text" id="updateLastName">
+                </div>
+                <button onclick="updateUser()">PUT /api/users/:id</button>
+                <div id="updateUserResponse" class="response" style="display:none;"></div>
+            </div>
+
+            <!-- Changer le rôle -->
+            <div class="card">
+                <h2>👑 Changer le rôle</h2>
+                <p class="small-text">Requiert: Admin uniquement</p>
+                <div class="form-group">
+                    <label>User ID:</label>
+                    <input type="text" id="roleUserId" placeholder="UUID">
+                </div>
+                <div class="form-group">
+                    <label>Nouveau rôle:</label>
+                    <select id="newRole">
+                        <option value="user">User</option>
+                        <option value="editor">Editor</option>
+                        <option value="manager">Manager</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button onclick="changeRole()">PATCH /api/users/:id/role</button>
+                <div id="roleResponse" class="response" style="display:none;"></div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Changer le mot de passe -->
+            <div class="card">
+                <h2>🔒 Changer mon mot de passe</h2>
+                <p class="small-text">Requiert: Authentification</p>
+                <div class="form-group">
+                    <label>Mot de passe actuel:</label>
+                    <input type="password" id="currentPassword">
+                </div>
+                <div class="form-group">
+                    <label>Nouveau mot de passe:</label>
+                    <input type="password" id="newPassword">
+                </div>
+                <button onclick="updatePassword()">PUT /api/auth/update-password</button>
+                <div id="passwordResponse" class="response" style="display:none;"></div>
+            </div>
+
+            <!-- Supprimer un utilisateur -->
+            <div class="card">
+                <h2>🗑️ Supprimer un utilisateur</h2>
+                <p class="small-text">Requiert: Admin uniquement</p>
+                <div class="form-group">
+                    <label>User ID:</label>
+                    <input type="text" id="deleteUserId" placeholder="UUID">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="permanent"> Suppression définitive
+                    </label>
+                </div>
+                <button onclick="deleteUser()" class="btn-danger">DELETE /api/users/:id</button>
+                <div id="deleteResponse" class="response" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000';
+        let currentToken = null;
+        let currentUser = null;
+
+        // Fonction pour afficher la réponse
+        function displayResponse(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = isError ? 'response error' : 'response success';
+            element.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+        }
+
+        // Fonction pour faire une requête
+        async function makeRequest(url, method = 'GET', body = null, useToken = true) {
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            if (useToken && currentToken) {
+                options.headers['Authorization'] = `Bearer ${currentToken}`;
+            }
+
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            try {
+                const response = await fetch(API_BASE + url, options);
+                const data = await response.json();
+                return { data, isError: !response.ok };
+            } catch (error) {
+                return { data: { error: error.message }, isError: true };
+            }
+        }
+
+        // Sauvegarder le token et l'utilisateur
+        function saveToken(token, user) {
+            currentToken = token;
+            currentUser = user;
+            document.getElementById('tokenDisplay').textContent = token;
+            displayUserInfo(user);
+        }
+
+        // Afficher les infos utilisateur
+        function displayUserInfo(user) {
+            const userInfoDiv = document.getElementById('userInfo');
+            if (user) {
+                userInfoDiv.innerHTML = `
+                    <p><strong>ID:</strong> ${user.id}</p>
+                    <p><strong>Username:</strong> ${user.username}</p>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Rôle:</strong> <span style="font-weight: bold; color: #667eea;">${user.role.toUpperCase()}</span></p>
+                `;
+            } else {
+                userInfoDiv.innerHTML = '<p>Non connecté</p>';
+            }
+        }
+
+        // Supprimer le token
+        function clearToken() {
+            currentToken = null;
+            currentUser = null;
+            document.getElementById('tokenDisplay').textContent = 'Aucun token';
+            displayUserInfo(null);
+        }
+
+        // Inscription
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const body = {
+                username: document.getElementById('reg_username').value,
+                email: document.getElementById('reg_email').value,
+                password: document.getElementById('reg_password').value,
+                role: document.getElementById('reg_role').value
+            };
+
+            const { data, isError } = await makeRequest('/api/auth/register', 'POST', body, false);
+            displayResponse('registerResponse', data, isError);
+
+            if (!isError && data.data) {
+                saveToken(data.data.token, data.data.user);
+            }
+        });
+
+        // Connexion
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const body = {
+                email: document.getElementById('login_email').value,
+                password: document.getElementById('login_password').value
+            };
+
+            const { data, isError } = await makeRequest('/api/auth/login', 'POST', body, false);
+            displayResponse('loginResponse', data, isError);
+
+            if (!isError && data.data) {
+                saveToken(data.data.token, data.data.user);
+            }
+        });
+
+        // Récupérer mes infos
+        async function getMe() {
+            const { data, isError } = await makeRequest('/api/auth/me');
+            displayResponse('meResponse', data, isError);
+
+            if (!isError && data.data) {
+                currentUser = data.data.user;
+                displayUserInfo(currentUser);
+            }
+        }
+
+        // Liste des utilisateurs
+        async function getAllUsers() {
+            const { data, isError } = await makeRequest('/api/users');
+            displayResponse('usersResponse', data, isError);
+        }
+
+        // Voir un utilisateur
+        async function getUserById() {
+            const id = document.getElementById('getUserId').value;
+            if (!id) {
+                alert('Veuillez entrer un User ID');
+                return;
+            }
+            const { data, isError } = await makeRequest(`/api/users/${id}`);
+            displayResponse('getUserResponse', data, isError);
+        }
+
+        // Modifier un utilisateur
+        async function updateUser() {
+            const id = document.getElementById('updateUserId').value;
+            if (!id) {
+                alert('Veuillez entrer un User ID');
+                return;
+            }
+
+            const body = {};
+            const username = document.getElementById('updateUsername').value;
+            const email = document.getElementById('updateEmail').value;
+            const firstName = document.getElementById('updateFirstName').value;
+            const lastName = document.getElementById('updateLastName').value;
+
+            if (username) body.username = username;
+            if (email) body.email = email;
+            if (firstName) body.first_name = firstName;
+            if (lastName) body.last_name = lastName;
+
+            const { data, isError } = await makeRequest(`/api/users/${id}`, 'PUT', body);
+            displayResponse('updateUserResponse', data, isError);
+        }
+
+        // Changer le rôle
+        async function changeRole() {
+            const id = document.getElementById('roleUserId').value;
+            if (!id) {
+                alert('Veuillez entrer un User ID');
+                return;
+            }
+
+            const body = {
+                role: document.getElementById('newRole').value
+            };
+
+            const { data, isError } = await makeRequest(`/api/users/${id}/role`, 'PATCH', body);
+            displayResponse('roleResponse', data, isError);
+        }
+
+        // Changer le mot de passe
+        async function updatePassword() {
+            const body = {
+                currentPassword: document.getElementById('currentPassword').value,
+                newPassword: document.getElementById('newPassword').value
+            };
+
+            if (!body.currentPassword || !body.newPassword) {
+                alert('Veuillez remplir tous les champs');
+                return;
+            }
+
+            const { data, isError } = await makeRequest('/api/auth/update-password', 'PUT', body);
+            displayResponse('passwordResponse', data, isError);
+        }
+
+        // Supprimer un utilisateur
+        async function deleteUser() {
+            const id = document.getElementById('deleteUserId').value;
+            if (!id) {
+                alert('Veuillez entrer un User ID');
+                return;
+            }
+
+            const permanent = document.getElementById('permanent').checked;
+            const url = permanent ? `/api/users/${id}?permanent=true` : `/api/users/${id}`;
+
+            const { data, isError } = await makeRequest(url, 'DELETE');
+            displayResponse('deleteResponse', data, isError);
+        }
+    </script>
+</body>
+</html>

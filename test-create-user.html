@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Créer un utilisateur</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .response {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 4px;
+      display: none;
+    }
+    .success {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+    .error {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+    pre {
+      margin: 10px 0 0 0;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    .required {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Créer un utilisateur</h1>
+
+    <form id="userForm">
+      <div class="form-group">
+        <label for="username">Username <span class="required">*</span></label>
+        <input type="text" id="username" name="username" required placeholder="john_doe">
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email <span class="required">*</span></label>
+        <input type="email" id="email" name="email" required placeholder="john@example.com">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password <span class="required">*</span></label>
+        <input type="password" id="password" name="password" required placeholder="Min. 6 caractères">
+      </div>
+
+      <div class="form-group">
+        <label for="role">Rôle</label>
+        <select id="role" name="role">
+          <option value="user">User (défaut)</option>
+          <option value="editor">Editor</option>
+          <option value="manager">Manager</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="first_name">Prénom</label>
+        <input type="text" id="first_name" name="first_name" placeholder="John">
+      </div>
+
+      <div class="form-group">
+        <label for="last_name">Nom</label>
+        <input type="text" id="last_name" name="last_name" placeholder="Doe">
+      </div>
+
+      <button type="submit">Créer l'utilisateur</button>
+    </form>
+
+    <div id="response" class="response"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('userForm');
+    const responseDiv = document.getElementById('response');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Récupération des données du formulaire
+      const formData = {
+        username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        role: document.getElementById('role').value,
+        first_name: document.getElementById('first_name').value || undefined,
+        last_name: document.getElementById('last_name').value || undefined
+      };
+
+      // Suppression des champs vides
+      Object.keys(formData).forEach(key => {
+        if (formData[key] === undefined || formData[key] === '') {
+          delete formData[key];
+        }
+      });
+
+      try {
+        const response = await fetch('http://localhost:3000/api/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+
+        // Affichage de la réponse
+        responseDiv.style.display = 'block';
+
+        if (response.ok) {
+          responseDiv.className = 'response success';
+          responseDiv.innerHTML = `
+            <strong>✅ ${data.message}</strong>
+            <pre>${JSON.stringify(data.user, null, 2)}</pre>
+          `;
+          form.reset(); // Réinitialiser le formulaire
+        } else {
+          responseDiv.className = 'response error';
+          responseDiv.innerHTML = `
+            <strong>❌ ${data.message}</strong>
+            ${data.errors ? '<pre>' + JSON.stringify(data.errors, null, 2) + '</pre>' : ''}
+          `;
+        }
+      } catch (error) {
+        responseDiv.style.display = 'block';
+        responseDiv.className = 'response error';
+        responseDiv.innerHTML = `
+          <strong>❌ Erreur de connexion</strong>
+          <p>${error.message}</p>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>

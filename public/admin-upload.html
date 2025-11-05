@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Images - Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2rem;
+        }
+
+        .logout-btn {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #667eea;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .content {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        select, input[type="file"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: #e9ecef;
+            border-color: #764ba2;
+        }
+
+        input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .preview-item .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            line-height: 1;
+            transition: all 0.3s;
+        }
+
+        .preview-item .remove-btn:hover {
+            background: rgba(220, 53, 69, 1);
+            transform: scale(1.1);
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .product-images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .image-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .image-card-body {
+            padding: 1rem;
+        }
+
+        .image-card .badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .image-card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .product-images-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Gestion des Images</h1>
+            <button class="logout-btn" onclick="logout()">Se déconnecter</button>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('upload-product')">
+                Upload Produit
+            </div>
+            <div class="tab" onclick="switchTab('upload-category')">
+                Upload Catégorie
+            </div>
+            <div class="tab" onclick="switchTab('manage-images')">
+                Gérer les Images
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Upload Produit -->
+            <div id="upload-product" class="tab-content active">
+                <h2 style="margin-bottom: 1.5rem; color: #667eea;">Upload d'images pour un produit</h2>
+
+                <div id="productAlert"></div>
+
+                <div class="form-group">
+                    <label for="productSelect">Sélectionner un produit</label>
+                    <select id="productSelect">
+                        <option value="">-- Chargement des produits --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Sélectionner des images (max 10)</label>
+                    <div class="file-input-wrapper">
+                        <label for="productImages" class="file-input-label">
+                            <span>📸 Cliquez ou glissez des images ici</span>
+                        </label>
+                        <input type="file" id="productImages" accept="image/*" multiple>
+                    </div>
+                </div>
+
+                <div id="productPreview" class="preview-container"></div>
+
+                <button class="btn btn-primary" onclick="uploadProductImages()" id="uploadProductBtn" disabled>
+                    Uploader les images
+                </button>
+            </div>
+
+            <!-- Upload Catégorie -->
+            <div id="upload-category" class="tab-content">
+                <h2 style="margin-bottom: 1.5rem; color: #667eea;">Upload d'image pour une catégorie</h2>
+
+                <div id="categoryAlert"></div>
+
+                <div class="form-group">
+                    <label for="categorySelect">Sélectionner une catégorie</label>
+                    <select id="categorySelect">
+                        <option value="">-- Chargement des catégories --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Sélectionner une image</label>
+                    <div class="file-input-wrapper">
+                        <label for="categoryImage" class="file-input-label">
+                            <span>📸 Cliquez ou glissez une image ici</span>
+                        </label>
+                        <input type="file" id="categoryImage" accept="image/*">
+                    </div>
+                </div>
+
+                <div id="categoryPreview" class="preview-container"></div>
+
+                <button class="btn btn-primary" onclick="uploadCategoryImage()" id="uploadCategoryBtn" disabled>
+                    Uploader l'image
+                </button>
+            </div>
+
+            <!-- Gérer les Images -->
+            <div id="manage-images" class="tab-content">
+                <h2 style="margin-bottom: 1.5rem; color: #667eea;">Gérer les images des produits</h2>
+
+                <div id="manageAlert"></div>
+
+                <div class="form-group">
+                    <label for="manageProductSelect">Sélectionner un produit</label>
+                    <select id="manageProductSelect" onchange="loadProductImages()">
+                        <option value="">-- Sélectionner un produit --</option>
+                    </select>
+                </div>
+
+                <div id="manageLoading" class="loading hidden">Chargement...</div>
+                <div id="productImagesGrid" class="product-images-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let token = localStorage.getItem('adminToken');
+        let selectedProductFiles = [];
+        let selectedCategoryFile = null;
+
+        // Vérifier l'authentification
+        if (!token) {
+            window.location.href = '/test/admin-login.html';
+        }
+
+        // Charger les produits et catégories au démarrage
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+            loadCategories();
+        });
+
+        // Switch entre les tabs
+        function switchTab(tabName) {
+            // Mettre à jour les tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+
+            // Recharger les données si nécessaire
+            if (tabName === 'manage-images') {
+                loadProducts(true);
+            }
+        }
+
+        // Charger les produits
+        async function loadProducts(forManage = false) {
+            try {
+                const response = await fetch(`${API_URL}/products`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) throw new Error('Erreur lors du chargement des produits');
+
+                const data = await response.json();
+                const products = data.data || data;
+
+                const selectId = forManage ? 'manageProductSelect' : 'productSelect';
+                const select = document.getElementById(selectId);
+
+                select.innerHTML = '<option value="">-- Sélectionner un produit --</option>';
+                products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = product.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('productAlert', 'Erreur lors du chargement des produits', 'error');
+            }
+        }
+
+        // Charger les catégories
+        async function loadCategories() {
+            try {
+                const response = await fetch(`${API_URL}/categories`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) throw new Error('Erreur lors du chargement des catégories');
+
+                const data = await response.json();
+                const categories = data.data || data;
+
+                const select = document.getElementById('categorySelect');
+                select.innerHTML = '<option value="">-- Sélectionner une catégorie --</option>';
+
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.id;
+                    option.textContent = category.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('categoryAlert', 'Erreur lors du chargement des catégories', 'error');
+            }
+        }
+
+        // Gérer la sélection de fichiers pour produits
+        document.getElementById('productImages').addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+
+            if (files.length > 10) {
+                showAlert('productAlert', 'Maximum 10 images autorisées', 'error');
+                return;
+            }
+
+            selectedProductFiles = files;
+            displayPreview(files, 'productPreview');
+
+            const productId = document.getElementById('productSelect').value;
+            document.getElementById('uploadProductBtn').disabled = !productId || files.length === 0;
+        });
+
+        // Gérer la sélection de fichier pour catégorie
+        document.getElementById('categoryImage').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            selectedCategoryFile = file;
+
+            if (file) {
+                displayPreview([file], 'categoryPreview');
+            }
+
+            const categoryId = document.getElementById('categorySelect').value;
+            document.getElementById('uploadCategoryBtn').disabled = !categoryId || !file;
+        });
+
+        // Activer le bouton quand un produit est sélectionné
+        document.getElementById('productSelect').addEventListener('change', (e) => {
+            const hasFiles = selectedProductFiles.length > 0;
+            document.getElementById('uploadProductBtn').disabled = !e.target.value || !hasFiles;
+        });
+
+        // Activer le bouton quand une catégorie est sélectionnée
+        document.getElementById('categorySelect').addEventListener('change', (e) => {
+            const hasFile = selectedCategoryFile !== null;
+            document.getElementById('uploadCategoryBtn').disabled = !e.target.value || !hasFile;
+        });
+
+        // Afficher la prévisualisation
+        function displayPreview(files, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const div = document.createElement('div');
+                    div.className = 'preview-item';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview ${index + 1}">
+                        <button class="remove-btn" onclick="removePreview(${index}, '${containerId}')">&times;</button>
+                    `;
+                    container.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Retirer une image de la prévisualisation
+        function removePreview(index, containerId) {
+            if (containerId === 'productPreview') {
+                selectedProductFiles.splice(index, 1);
+                displayPreview(selectedProductFiles, 'productPreview');
+
+                const productId = document.getElementById('productSelect').value;
+                document.getElementById('uploadProductBtn').disabled = !productId || selectedProductFiles.length === 0;
+            } else if (containerId === 'categoryPreview') {
+                selectedCategoryFile = null;
+                document.getElementById('categoryPreview').innerHTML = '';
+                document.getElementById('categoryImage').value = '';
+
+                const categoryId = document.getElementById('categorySelect').value;
+                document.getElementById('uploadCategoryBtn').disabled = !categoryId || !selectedCategoryFile;
+            }
+        }
+
+        // Upload images de produit
+        async function uploadProductImages() {
+            const productId = document.getElementById('productSelect').value;
+
+            if (!productId || selectedProductFiles.length === 0) {
+                showAlert('productAlert', 'Veuillez sélectionner un produit et des images', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            selectedProductFiles.forEach(file => {
+                formData.append('images', file);
+            });
+
+            const btn = document.getElementById('uploadProductBtn');
+            btn.disabled = true;
+            btn.textContent = 'Upload en cours...';
+
+            try {
+                const response = await fetch(`${API_URL}/upload/products/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Erreur lors de l\'upload');
+                }
+
+                showAlert('productAlert', data.message || 'Images uploadées avec succès!', 'success');
+
+                // Réinitialiser
+                selectedProductFiles = [];
+                document.getElementById('productImages').value = '';
+                document.getElementById('productPreview').innerHTML = '';
+                btn.disabled = true;
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('productAlert', error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Uploader les images';
+            }
+        }
+
+        // Upload image de catégorie
+        async function uploadCategoryImage() {
+            const categoryId = document.getElementById('categorySelect').value;
+
+            if (!categoryId || !selectedCategoryFile) {
+                showAlert('categoryAlert', 'Veuillez sélectionner une catégorie et une image', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', selectedCategoryFile);
+
+            const btn = document.getElementById('uploadCategoryBtn');
+            btn.disabled = true;
+            btn.textContent = 'Upload en cours...';
+
+            try {
+                const response = await fetch(`${API_URL}/upload/categories/${categoryId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Erreur lors de l\'upload');
+                }
+
+                showAlert('categoryAlert', data.message || 'Image uploadée avec succès!', 'success');
+
+                // Réinitialiser
+                selectedCategoryFile = null;
+                document.getElementById('categoryImage').value = '';
+                document.getElementById('categoryPreview').innerHTML = '';
+                btn.disabled = true;
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('categoryAlert', error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Uploader l\'image';
+            }
+        }
+
+        // Charger les images d'un produit
+        async function loadProductImages() {
+            const productId = document.getElementById('manageProductSelect').value;
+
+            if (!productId) {
+                document.getElementById('productImagesGrid').innerHTML = '';
+                return;
+            }
+
+            document.getElementById('manageLoading').classList.remove('hidden');
+            document.getElementById('productImagesGrid').innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_URL}/products/${productId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) throw new Error('Erreur lors du chargement du produit');
+
+                const data = await response.json();
+                const product = data.data || data;
+                const images = product.images || [];
+
+                document.getElementById('manageLoading').classList.add('hidden');
+
+                if (images.length === 0) {
+                    document.getElementById('productImagesGrid').innerHTML = '<p>Aucune image pour ce produit</p>';
+                    return;
+                }
+
+                const grid = document.getElementById('productImagesGrid');
+                grid.innerHTML = '';
+
+                images.forEach((image, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'image-card';
+                    card.innerHTML = `
+                        <img src="${image.url}" alt="${image.alt || 'Image produit'}">
+                        <div class="image-card-body">
+                            ${image.isPrimary ? '<span class="badge badge-primary">Image Principale</span>' : ''}
+                            <div class="image-card-actions">
+                                ${!image.isPrimary ? `<button class="btn btn-sm btn-success" onclick="setPrimaryImage('${productId}', '${image.url}')">Définir principale</button>` : ''}
+                                <button class="btn btn-sm btn-danger" onclick="deleteProductImage('${productId}', '${image.url}')">Supprimer</button>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('manageLoading').classList.add('hidden');
+                showAlert('manageAlert', 'Erreur lors du chargement des images', 'error');
+            }
+        }
+
+        // Définir une image comme principale
+        async function setPrimaryImage(productId, imageUrl) {
+            try {
+                const response = await fetch(`${API_URL}/upload/products/${productId}/images/primary`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ imageUrl })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Erreur');
+                }
+
+                showAlert('manageAlert', 'Image principale mise à jour!', 'success');
+                loadProductImages();
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('manageAlert', error.message, 'error');
+            }
+        }
+
+        // Supprimer une image de produit
+        async function deleteProductImage(productId, imageUrl) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cette image?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/upload/products/${productId}/images`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ imageUrl })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Erreur');
+                }
+
+                showAlert('manageAlert', 'Image supprimée avec succès!', 'success');
+                loadProductImages();
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('manageAlert', error.message, 'error');
+            }
+        }
+
+        // Afficher une alerte
+        function showAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // Déconnexion
+        function logout() {
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter?')) {
+                localStorage.removeItem('adminToken');
+                window.location.href = '/test/admin-login.html';
+            }
+        }
+    </script>
+</body>
+</html>

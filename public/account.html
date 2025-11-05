@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Compte - Ma Boutique</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success-color: #16a34a;
+            --danger-color: #dc2626;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --bg-light: #f9fafb;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-lg: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-light);
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        .cart-badge {
+            background: white;
+            color: var(--primary-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Auth Section (Login/Register) */
+        #authSection {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 1rem;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .auth-content {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 0 0 8px 8px;
+            padding: 2rem;
+        }
+
+        .auth-panel {
+            display: none;
+        }
+
+        .auth-panel.active {
+            display: block;
+        }
+
+        /* Account Section */
+        #accountSection {
+            display: none;
+        }
+
+        .account-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+        }
+
+        .account-sidebar {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            height: fit-content;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sidebar-nav-item {
+            padding: 0.75rem 1rem;
+            background: white;
+            border: none;
+            border-radius: 4px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-primary);
+            transition: all 0.3s;
+        }
+
+        .sidebar-nav-item:hover {
+            background: var(--bg-light);
+        }
+
+        .sidebar-nav-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .sidebar-nav-item.logout {
+            color: var(--danger-color);
+            margin-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+
+        .account-content {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+        }
+
+        .account-panel {
+            display: none;
+        }
+
+        .account-panel.active {
+            display: block;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-label.required::after {
+            content: '*';
+            color: var(--danger-color);
+            margin-left: 0.25rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-input.error {
+            border-color: var(--danger-color);
+        }
+
+        .form-error {
+            color: var(--danger-color);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-light);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Messages */
+        .message {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .message-success {
+            background: #dcfce7;
+            color: var(--success-color);
+        }
+
+        .message-error {
+            background: #fee2e2;
+            color: var(--danger-color);
+        }
+
+        /* User Info Card */
+        .user-info-card {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .user-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-info-row:last-child {
+            border-bottom: none;
+        }
+
+        .user-info-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .user-info-value {
+            color: var(--text-primary);
+        }
+
+        /* Addresses */
+        .addresses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .address-card {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .address-card.default {
+            border-color: var(--primary-color);
+            background: #eff6ff;
+        }
+
+        .address-default-badge {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .address-content {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .address-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .address-actions button {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .account-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .account-sidebar {
+                order: -1;
+            }
+
+            .sidebar-nav {
+                flex-direction: row;
+                overflow-x: auto;
+            }
+
+            .sidebar-nav-item {
+                white-space: nowrap;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .addresses-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .auth-content, .account-content {
+                padding: 1.5rem;
+            }
+
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav {
+                display: flex;
+                gap: 1rem;
+            }
+
+            nav a {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="/index.html" class="logo">Ma Boutique</a>
+            <nav>
+                <a href="/index.html">Accueil</a>
+                <a href="/products.html">Produits</a>
+                <a href="/cart.html">
+                    Panier
+                    <span class="cart-badge" id="cartCount">0</span>
+                </a>
+                <a href="/account.html">Mon Compte</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Auth Section (Login/Register) -->
+        <div id="authSection">
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchAuthTab('login')">
+                    Connexion
+                </div>
+                <div class="auth-tab" onclick="switchAuthTab('register')">
+                    Inscription
+                </div>
+            </div>
+
+            <div class="auth-content">
+                <div id="authMessage" style="display: none;"></div>
+
+                <!-- Login Panel -->
+                <div class="auth-panel active" id="loginPanel">
+                    <h2 class="page-title">Connexion</h2>
+                    <form id="loginForm" onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label class="form-label required">Email</label>
+                            <input type="email" class="form-input" id="loginEmail" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">Mot de passe</label>
+                            <input type="password" class="form-input" id="loginPassword" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            Se connecter
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Register Panel -->
+                <div class="auth-panel" id="registerPanel">
+                    <h2 class="page-title">Inscription</h2>
+                    <form id="registerForm" onsubmit="handleRegister(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label required">Prénom</label>
+                                <input type="text" class="form-input" id="registerFirstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label required">Nom</label>
+                                <input type="text" class="form-input" id="registerLastName" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">Email</label>
+                            <input type="email" class="form-input" id="registerEmail" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">Mot de passe</label>
+                            <input type="password" class="form-input" id="registerPassword" required minlength="8">
+                            <small style="color: var(--text-secondary);">Minimum 8 caractères</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">Confirmer le mot de passe</label>
+                            <input type="password" class="form-input" id="registerPasswordConfirm" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            S'inscrire
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Section (Logged In) -->
+        <div id="accountSection">
+            <div class="account-layout">
+                <!-- Sidebar Navigation -->
+                <div class="account-sidebar">
+                    <nav class="sidebar-nav">
+                        <button class="sidebar-nav-item active" onclick="switchAccountPanel('profile')">
+                            Profil
+                        </button>
+                        <button class="sidebar-nav-item" onclick="switchAccountPanel('addresses')">
+                            Adresses
+                        </button>
+                        <button class="sidebar-nav-item" onclick="switchAccountPanel('orders')">
+                            Commandes
+                        </button>
+                        <button class="sidebar-nav-item" onclick="switchAccountPanel('password')">
+                            Mot de passe
+                        </button>
+                        <button class="sidebar-nav-item logout" onclick="handleLogout()">
+                            Déconnexion
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Account Content -->
+                <div class="account-content">
+                    <div id="accountMessage" style="display: none;"></div>
+
+                    <!-- Profile Panel -->
+                    <div class="account-panel active" id="profilePanel">
+                        <h2 class="page-title">Mon Profil</h2>
+
+                        <div class="user-info-card">
+                            <div class="user-info-row">
+                                <span class="user-info-label">Nom complet</span>
+                                <span class="user-info-value" id="profileFullName"></span>
+                            </div>
+                            <div class="user-info-row">
+                                <span class="user-info-label">Email</span>
+                                <span class="user-info-value" id="profileEmail"></span>
+                            </div>
+                            <div class="user-info-row">
+                                <span class="user-info-label">Membre depuis</span>
+                                <span class="user-info-value" id="profileMemberSince"></span>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-bottom: 1rem;">Modifier mes informations</h3>
+                        <form id="profileForm" onsubmit="handleUpdateProfile(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Prénom</label>
+                                    <input type="text" class="form-input" id="profileFirstName">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Nom</label>
+                                    <input type="text" class="form-input" id="profileLastName">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                Enregistrer
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Addresses Panel -->
+                    <div class="account-panel" id="addressesPanel">
+                        <h2 class="page-title">Mes Adresses</h2>
+
+                        <button class="btn btn-primary" onclick="showAddAddressForm()" style="margin-bottom: 1.5rem;">
+                            Ajouter une adresse
+                        </button>
+
+                        <div id="addressesList" class="addresses-grid"></div>
+
+                        <!-- Add Address Form (hidden by default) -->
+                        <div id="addAddressForm" style="display: none; margin-top: 2rem; padding: 1.5rem; background: var(--bg-light); border-radius: 8px;">
+                            <h3 style="margin-bottom: 1rem;">Nouvelle adresse</h3>
+                            <form onsubmit="handleAddAddress(event)">
+                                <div class="form-group">
+                                    <label class="form-label required">Nom complet</label>
+                                    <input type="text" class="form-input" id="addressName" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label required">Adresse</label>
+                                    <input type="text" class="form-input" id="addressLine" required>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label required">Code postal</label>
+                                        <input type="text" class="form-input" id="addressZip" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label required">Ville</label>
+                                        <input type="text" class="form-input" id="addressCity" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label required">Pays</label>
+                                    <input type="text" class="form-input" id="addressCountry" value="France" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Téléphone</label>
+                                    <input type="tel" class="form-input" id="addressPhone">
+                                </div>
+
+                                <div class="form-group">
+                                    <label style="display: flex; align-items: center; cursor: pointer;">
+                                        <input type="checkbox" id="addressDefault" style="margin-right: 0.5rem;">
+                                        Définir comme adresse par défaut
+                                    </label>
+                                </div>
+
+                                <div style="display: flex; gap: 1rem;">
+                                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                    <button type="button" class="btn btn-secondary" onclick="hideAddAddressForm()">Annuler</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Orders Panel -->
+                    <div class="account-panel" id="ordersPanel">
+                        <h2 class="page-title">Mes Commandes</h2>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                            Consultez l'historique de vos commandes
+                        </p>
+                        <a href="/orders.html" class="btn btn-primary">Voir mes commandes</a>
+                    </div>
+
+                    <!-- Password Panel -->
+                    <div class="account-panel" id="passwordPanel">
+                        <h2 class="page-title">Changer mon mot de passe</h2>
+
+                        <form id="passwordForm" onsubmit="handleChangePassword(event)" style="max-width: 500px;">
+                            <div class="form-group">
+                                <label class="form-label required">Mot de passe actuel</label>
+                                <input type="password" class="form-input" id="currentPassword" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label required">Nouveau mot de passe</label>
+                                <input type="password" class="form-input" id="newPassword" required minlength="8">
+                                <small style="color: var(--text-secondary);">Minimum 8 caractères</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label required">Confirmer le nouveau mot de passe</label>
+                                <input type="password" class="form-input" id="newPasswordConfirm" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                Changer le mot de passe
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <p>&copy; 2024 Ma Boutique. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let currentUser = null;
+        let addresses = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            updateCartBadge();
+        });
+
+        // Check authentication
+        function checkAuth() {
+            const savedUser = localStorage.getItem('user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showAccountSection();
+                loadUserData();
+            } else {
+                showAuthSection();
+            }
+        }
+
+        // Show auth section
+        function showAuthSection() {
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('accountSection').style.display = 'none';
+        }
+
+        // Show account section
+        function showAccountSection() {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('accountSection').style.display = 'block';
+        }
+
+        // Switch auth tab
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+
+            if (tab === 'login') {
+                document.querySelectorAll('.auth-tab')[0].classList.add('active');
+                document.getElementById('loginPanel').classList.add('active');
+            } else {
+                document.querySelectorAll('.auth-tab')[1].classList.add('active');
+                document.getElementById('registerPanel').classList.add('active');
+            }
+
+            // Clear message
+            document.getElementById('authMessage').style.display = 'none';
+        }
+
+        // Switch account panel
+        function switchAccountPanel(panel) {
+            document.querySelectorAll('.sidebar-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.account-panel').forEach(p => {
+                p.classList.remove('active');
+            });
+
+            event.target.classList.add('active');
+            document.getElementById(`${panel}Panel`).classList.add('active');
+
+            // Clear message
+            document.getElementById('accountMessage').style.display = 'none';
+
+            // Load specific data
+            if (panel === 'addresses') {
+                loadAddresses();
+            }
+        }
+
+        // Handle login
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Save user
+                    currentUser = data.data;
+                    localStorage.setItem('user', JSON.stringify(currentUser));
+
+                    // Show account section
+                    showAccountSection();
+                    loadUserData();
+                } else {
+                    showAuthMessage(data.message || 'Identifiants incorrects', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAuthMessage('Erreur lors de la connexion', 'error');
+            }
+        }
+
+        // Handle register
+        async function handleRegister(event) {
+            event.preventDefault();
+
+            const firstName = document.getElementById('registerFirstName').value;
+            const lastName = document.getElementById('registerLastName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+
+            if (password !== passwordConfirm) {
+                showAuthMessage('Les mots de passe ne correspondent pas', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        first_name: firstName,
+                        last_name: lastName,
+                        email,
+                        password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Save user
+                    currentUser = data.data;
+                    localStorage.setItem('user', JSON.stringify(currentUser));
+
+                    // Show account section
+                    showAccountSection();
+                    loadUserData();
+                } else {
+                    showAuthMessage(data.message || 'Erreur lors de l\'inscription', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAuthMessage('Erreur lors de l\'inscription', 'error');
+            }
+        }
+
+        // Handle logout
+        function handleLogout() {
+            if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
+                localStorage.removeItem('user');
+                currentUser = null;
+                showAuthSection();
+            }
+        }
+
+        // Load user data
+        function loadUserData() {
+            if (!currentUser) return;
+
+            // Profile
+            document.getElementById('profileFullName').textContent =
+                `${currentUser.first_name} ${currentUser.last_name}`;
+            document.getElementById('profileEmail').textContent = currentUser.email;
+            document.getElementById('profileMemberSince').textContent =
+                new Date(currentUser.created_at).toLocaleDateString('fr-FR');
+
+            document.getElementById('profileFirstName').value = currentUser.first_name;
+            document.getElementById('profileLastName').value = currentUser.last_name;
+        }
+
+        // Handle update profile
+        async function handleUpdateProfile(event) {
+            event.preventDefault();
+
+            const firstName = document.getElementById('profileFirstName').value;
+            const lastName = document.getElementById('profileLastName').value;
+
+            try {
+                const response = await fetch(`${API_URL}/users/me`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentUser.token}`
+                    },
+                    body: JSON.stringify({
+                        first_name: firstName,
+                        last_name: lastName
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentUser.first_name = firstName;
+                    currentUser.last_name = lastName;
+                    localStorage.setItem('user', JSON.stringify(currentUser));
+
+                    loadUserData();
+                    showAccountMessage('Profil mis à jour avec succès', 'success');
+                } else {
+                    showAccountMessage(data.message || 'Erreur lors de la mise à jour', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAccountMessage('Erreur lors de la mise à jour', 'error');
+            }
+        }
+
+        // Handle change password
+        async function handleChangePassword(event) {
+            event.preventDefault();
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const newPasswordConfirm = document.getElementById('newPasswordConfirm').value;
+
+            if (newPassword !== newPasswordConfirm) {
+                showAccountMessage('Les mots de passe ne correspondent pas', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/users/me/password`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentUser.token}`
+                    },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('passwordForm').reset();
+                    showAccountMessage('Mot de passe changé avec succès', 'success');
+                } else {
+                    showAccountMessage(data.message || 'Erreur lors du changement de mot de passe', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAccountMessage('Erreur lors du changement de mot de passe', 'error');
+            }
+        }
+
+        // Load addresses
+        async function loadAddresses() {
+            try {
+                const response = await fetch(`${API_URL}/users/me/addresses`, {
+                    headers: {
+                        'Authorization': `Bearer ${currentUser.token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    addresses = data.data;
+                    renderAddresses();
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        // Render addresses
+        function renderAddresses() {
+            const list = document.getElementById('addressesList');
+
+            if (addresses.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-secondary);">Aucune adresse enregistrée</p>';
+                return;
+            }
+
+            list.innerHTML = addresses.map(address => `
+                <div class="address-card ${address.is_default ? 'default' : ''}">
+                    ${address.is_default ? '<span class="address-default-badge">Par défaut</span>' : ''}
+                    <div class="address-content">
+                        <strong>${address.name}</strong><br>
+                        ${address.address_line}<br>
+                        ${address.zip_code} ${address.city}<br>
+                        ${address.country}
+                        ${address.phone ? '<br>Tél: ' + address.phone : ''}
+                    </div>
+                    <div class="address-actions">
+                        ${!address.is_default ? `<button class="btn btn-secondary" onclick="setDefaultAddress('${address.id}')">Par défaut</button>` : ''}
+                        <button class="btn btn-danger" onclick="deleteAddress('${address.id}')">Supprimer</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Show add address form
+        function showAddAddressForm() {
+            document.getElementById('addAddressForm').style.display = 'block';
+        }
+
+        // Hide add address form
+        function hideAddAddressForm() {
+            document.getElementById('addAddressForm').style.display = 'none';
+            document.querySelector('#addAddressForm form').reset();
+        }
+
+        // Handle add address
+        async function handleAddAddress(event) {
+            event.preventDefault();
+
+            const addressData = {
+                name: document.getElementById('addressName').value,
+                address_line: document.getElementById('addressLine').value,
+                zip_code: document.getElementById('addressZip').value,
+                city: document.getElementById('addressCity').value,
+                country: document.getElementById('addressCountry').value,
+                phone: document.getElementById('addressPhone').value,
+                is_default: document.getElementById('addressDefault').checked
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/users/me/addresses`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentUser.token}`
+                    },
+                    body: JSON.stringify(addressData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    hideAddAddressForm();
+                    loadAddresses();
+                    showAccountMessage('Adresse ajoutée avec succès', 'success');
+                } else {
+                    showAccountMessage(data.message || 'Erreur lors de l\'ajout de l\'adresse', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAccountMessage('Erreur lors de l\'ajout de l\'adresse', 'error');
+            }
+        }
+
+        // Set default address
+        async function setDefaultAddress(addressId) {
+            try {
+                const response = await fetch(`${API_URL}/users/me/addresses/${addressId}/default`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${currentUser.token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    loadAddresses();
+                    showAccountMessage('Adresse par défaut définie', 'success');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        // Delete address
+        async function deleteAddress(addressId) {
+            if (!confirm('Voulez-vous vraiment supprimer cette adresse ?')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/users/me/addresses/${addressId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${currentUser.token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    loadAddresses();
+                    showAccountMessage('Adresse supprimée', 'success');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        // Show auth message
+        function showAuthMessage(message, type) {
+            const messageEl = document.getElementById('authMessage');
+            messageEl.className = `message message-${type}`;
+            messageEl.textContent = message;
+            messageEl.style.display = 'block';
+
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 5000);
+        }
+
+        // Show account message
+        function showAccountMessage(message, type) {
+            const messageEl = document.getElementById('accountMessage');
+            messageEl.className = `message message-${type}`;
+            messageEl.textContent = message;
+            messageEl.style.display = 'block';
+
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 5000);
+        }
+
+        // Update cart badge
+        function updateCartBadge() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+    </script>
+</body>
+</html>

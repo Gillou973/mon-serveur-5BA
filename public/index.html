@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boutique E-Commerce - Accueil</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --text-dark: #2d3748;
+            --text-light: #718096;
+            --border-color: #e2e8f0;
+            --bg-light: #f7fafc;
+            --success: #48bb78;
+            --warning: #ed8936;
+            --danger: #f56565;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 0;
+            font-size: 0.875rem;
+        }
+
+        .header-top .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-main {
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: relative;
+            color: var(--text-dark);
+            transition: color 0.3s;
+        }
+
+        .icon-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            background: white;
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        /* Categories Section */
+        .section {
+            padding: 4rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            color: var(--text-light);
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .category-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .category-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .category-info h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .category-info p {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        /* Products Section */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 250px;
+            background: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--text-light);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--danger);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .product-description {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .price-current {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .price-old {
+            font-size: 1rem;
+            color: var(--text-light);
+            text-decoration: line-through;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Loading & Empty States */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-top">
+            <div class="container">
+                <div>📞 Livraison gratuite dès 50€ d'achat</div>
+                <div>🎁 Offres spéciales disponibles</div>
+            </div>
+        </div>
+        <nav class="nav-main">
+            <div class="nav-container">
+                <a href="/" class="logo">🛒 E-Shop</a>
+
+                <ul class="nav-links">
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="/products.html">Produits</a></li>
+                    <li><a href="/categories.html">Catégories</a></li>
+                    <li><a href="#about">À propos</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button class="icon-btn" onclick="toggleSearch()">🔍</button>
+                    <button class="icon-btn" onclick="window.location.href='/account.html'">👤</button>
+                    <button class="icon-btn" onclick="window.location.href='/cart.html'">
+                        🛒
+                        <span class="cart-badge" id="cartBadge">0</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Bienvenue dans votre boutique</h1>
+            <p>Découvrez nos produits de qualité au meilleur prix</p>
+            <a href="/products.html" class="btn">Voir les produits</a>
+            <a href="#categories" class="btn btn-outline">Explorer les catégories</a>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="section" id="categories">
+        <div class="container">
+            <div class="section-header">
+                <h2>Nos Catégories</h2>
+                <p>Explorez nos différentes catégories de produits</p>
+            </div>
+            <div class="categories-grid" id="categoriesContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Chargement des catégories...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products Section -->
+    <section class="section" style="background: var(--bg-light);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Produits en Vedette</h2>
+                <p>Découvrez notre sélection de produits populaires</p>
+            </div>
+            <div class="products-grid" id="productsContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Chargement des produits...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>À propos</h4>
+                    <p>Votre boutique en ligne de confiance pour tous vos besoins.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Liens rapides</h4>
+                    <ul class="footer-links">
+                        <li><a href="/products.html">Produits</a></li>
+                        <li><a href="/categories.html">Catégories</a></li>
+                        <li><a href="/account.html">Mon compte</a></li>
+                        <li><a href="/cart.html">Panier</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Informations</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Conditions de vente</a></li>
+                        <li><a href="#">Politique de confidentialité</a></li>
+                        <li><a href="#">Livraison</a></li>
+                        <li><a href="#">Retours</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul class="footer-links">
+                        <li>📧 contact@eshop.com</li>
+                        <li>📞 +33 1 23 45 67 89</li>
+                        <li>📍 Paris, France</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 E-Shop. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+        // Update cart badge
+        function updateCartBadge() {
+            const badge = document.getElementById('cartBadge');
+            const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            badge.textContent = itemCount;
+        }
+
+        // Load categories
+        async function loadCategories() {
+            try {
+                const response = await fetch(`${API_URL}/categories`);
+                const data = await response.json();
+                const categories = data.data || data;
+
+                const container = document.getElementById('categoriesContainer');
+
+                if (!Array.isArray(categories) || categories.length === 0) {
+                    container.innerHTML = '<p style="text-align:center;color:#666;">Aucune catégorie disponible</p>';
+                    return;
+                }
+
+                container.innerHTML = categories.slice(0, 6).map(category => `
+                    <a href="/products.html?category=${category.id}" class="category-card">
+                        <div class="category-image">
+                            ${category.name.charAt(0)}
+                        </div>
+                        <div class="category-info">
+                            <h3>${category.name}</h3>
+                            <p>${category.description || 'Découvrez nos produits'}</p>
+                        </div>
+                    </a>
+                `).join('');
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('categoriesContainer').innerHTML =
+                    '<p style="text-align:center;color:#f56565;">Erreur de chargement des catégories</p>';
+            }
+        }
+
+        // Load featured products
+        async function loadFeaturedProducts() {
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const data = await response.json();
+                const products = data.data || data;
+
+                const container = document.getElementById('productsContainer');
+
+                if (!Array.isArray(products) || products.length === 0) {
+                    container.innerHTML = '<p style="text-align:center;color:#666;">Aucun produit disponible</p>';
+                    return;
+                }
+
+                const featuredProducts = products.filter(p => p.is_featured).slice(0, 8);
+                const displayProducts = featuredProducts.length > 0 ? featuredProducts : products.slice(0, 8);
+
+                container.innerHTML = displayProducts.map(product => {
+                    const hasDiscount = product.compare_price && product.compare_price > product.price;
+                    const discountPercent = hasDiscount
+                        ? Math.round(((product.compare_price - product.price) / product.compare_price) * 100)
+                        : 0;
+
+                    return `
+                        <div class="product-card" onclick="window.location.href='/product.html?id=${product.id}'">
+                            <div class="product-image" style="position:relative;">
+                                ${product.name.charAt(0)}
+                                ${hasDiscount ? `<div class="product-badge">-${discountPercent}%</div>` : ''}
+                            </div>
+                            <div class="product-info">
+                                <div class="product-title">${product.name}</div>
+                                <div class="product-description">${product.short_description || product.description || ''}</div>
+                                <div class="product-price">
+                                    <span class="price-current">${product.price}€</span>
+                                    ${hasDiscount ? `<span class="price-old">${product.compare_price}€</span>` : ''}
+                                </div>
+                                <div class="product-actions">
+                                    <button class="btn btn-primary btn-small" onclick="event.stopPropagation(); addToCart('${product.id}', '${product.name}', ${product.price})">
+                                        Ajouter au panier
+                                    </button>
+                                    <button class="btn btn-outline btn-small btn-icon" onclick="event.stopPropagation(); alert('Ajouté aux favoris')">
+                                        ❤️
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('productsContainer').innerHTML =
+                    '<p style="text-align:center;color:#f56565;">Erreur de chargement des produits</p>';
+            }
+        }
+
+        // Add to cart
+        function addToCart(id, name, price) {
+            const existingItem = cart.find(item => item.product_id === id);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    product_id: id,
+                    name,
+                    price: parseFloat(price),
+                    quantity: 1
+                });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartBadge();
+
+            // Show toast notification
+            alert(`${name} ajouté au panier!`);
+        }
+
+        // Toggle search
+        function toggleSearch() {
+            const searchTerm = prompt('Rechercher un produit:');
+            if (searchTerm) {
+                window.location.href = `/products.html?search=${encodeURIComponent(searchTerm)}`;
+            }
+        }
+
+        // Initialize
+        updateCartBadge();
+        loadCategories();
+        loadFeaturedProducts();
+    </script>
+</body>
+</html>

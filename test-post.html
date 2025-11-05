@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <body>
+    <form id="f">
+      <input name="name" value="Gilles" />
+      <button>Envoyer</button>
+    </form>
+    <pre id="out"></pre>
+    <script>
+      f.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(f).entries());
+        const res = await fetch('http://localhost:3000/api/data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        out.textContent = JSON.stringify(await res.json(), null, 2);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Promotions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Login Form */
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .login-container h2 {
+            margin-bottom: 1.5rem;
+            color: #667eea;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e1e8ed;
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .card-header h3 {
+            font-size: 1.3rem;
+            color: #1e293b;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8fafc;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 1rem;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-percentage {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-fixed {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-free-shipping {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            color: #1e293b;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .close-btn:hover {
+            background: #f1f5f9;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .logout-btn {
+                width: 100%;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+
+            .card-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <h2>Connexion Admin</h2>
+        <div id="loginError" class="alert alert-error hidden"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Se connecter</button>
+        </form>
+    </div>
+
+    <!-- Main App (hidden by default) -->
+    <div id="mainApp" class="hidden">
+        <div class="header">
+            <h1>Gestion des Promotions</h1>
+            <button class="logout-btn" onclick="logout()">Se déconnecter</button>
+        </div>
+
+        <div class="container">
+            <div id="alertContainer"></div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" data-tab="coupons">Codes Promo</button>
+                <button class="tab" data-tab="discounts">Réductions Auto</button>
+                <button class="tab" data-tab="bundles">Bundles</button>
+            </div>
+
+            <!-- Coupons Tab -->
+            <div id="couponsTab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Codes Promo</h3>
+                        <button class="btn btn-success btn-sm" onclick="showCreateCouponModal()">+ Nouveau Coupon</button>
+                    </div>
+                    <div id="couponsTable" class="table-container">
+                        <div class="loading">Chargement...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discounts Tab -->
+            <div id="discountsTab" class="tab-content hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Réductions Automatiques</h3>
+                        <button class="btn btn-success btn-sm" onclick="showCreateDiscountModal()">+ Nouvelle Réduction</button>
+                    </div>
+                    <div id="discountsTable" class="table-container">
+                        <div class="loading">Chargement...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bundles Tab -->
+            <div id="bundlesTab" class="tab-content hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Bundles & Offres Groupées</h3>
+                        <button class="btn btn-success btn-sm" onclick="showCreateBundleModal()">+ Nouveau Bundle</button>
+                    </div>
+                    <div id="bundlesTable" class="table-container">
+                        <div class="loading">Chargement...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coupon Modal -->
+    <div id="couponModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="couponModalTitle">Nouveau Coupon</h3>
+                <button class="close-btn" onclick="closeCouponModal()">&times;</button>
+            </div>
+            <form id="couponForm">
+                <input type="hidden" id="couponId">
+                <div class="form-group">
+                    <label for="couponCode">Code *</label>
+                    <input type="text" id="couponCode" required placeholder="Ex: SUMMER20">
+                </div>
+                <div class="form-group">
+                    <label for="couponName">Nom *</label>
+                    <input type="text" id="couponName" required placeholder="Ex: Promotion été">
+                </div>
+                <div class="form-group">
+                    <label for="couponDescription">Description</label>
+                    <textarea id="couponDescription" placeholder="Description de l'offre"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="couponType">Type *</label>
+                        <select id="couponType" required>
+                            <option value="percentage">Pourcentage</option>
+                            <option value="fixed_amount">Montant fixe</option>
+                            <option value="free_shipping">Livraison gratuite</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="couponValue">Valeur *</label>
+                        <input type="number" id="couponValue" required step="0.01" min="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="couponMinPurchase">Montant minimum</label>
+                        <input type="number" id="couponMinPurchase" step="0.01" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="couponMaxDiscount">Réduction max</label>
+                        <input type="number" id="couponMaxDiscount" step="0.01" min="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="couponUsageLimit">Limite totale</label>
+                        <input type="number" id="couponUsageLimit" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="couponUserLimit">Limite par utilisateur</label>
+                        <input type="number" id="couponUserLimit" min="1" value="1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="couponAppliesTo">S'applique à *</label>
+                    <select id="couponAppliesTo">
+                        <option value="all">Tous les produits</option>
+                        <option value="specific_products">Produits spécifiques</option>
+                        <option value="specific_categories">Catégories spécifiques</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="couponValidFrom">Valide à partir de</label>
+                        <input type="datetime-local" id="couponValidFrom">
+                    </div>
+                    <div class="form-group">
+                        <label for="couponValidUntil">Valide jusqu'à</label>
+                        <input type="datetime-local" id="couponValidUntil">
+                    </div>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="couponIsActive" checked>
+                    <label for="couponIsActive">Actif</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Discount Modal -->
+    <div id="discountModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="discountModalTitle">Nouvelle Réduction</h3>
+                <button class="close-btn" onclick="closeDiscountModal()">&times;</button>
+            </div>
+            <form id="discountForm">
+                <input type="hidden" id="discountId">
+                <div class="form-group">
+                    <label for="discountName">Nom *</label>
+                    <input type="text" id="discountName" required placeholder="Ex: Soldes d'hiver">
+                </div>
+                <div class="form-group">
+                    <label for="discountDescription">Description</label>
+                    <textarea id="discountDescription" placeholder="Description de la réduction"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="discountType">Type *</label>
+                        <select id="discountType" required>
+                            <option value="percentage">Pourcentage</option>
+                            <option value="fixed_amount">Montant fixe</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="discountValue">Valeur *</label>
+                        <input type="number" id="discountValue" required step="0.01" min="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="discountAppliesTo">S'applique à *</label>
+                    <select id="discountAppliesTo" required>
+                        <option value="all">Tous les produits</option>
+                        <option value="category">Catégorie</option>
+                        <option value="product">Produit</option>
+                        <option value="product_variant">Variante</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="discountMinQuantity">Quantité minimum</label>
+                        <input type="number" id="discountMinQuantity" min="1" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="discountPriority">Priorité</label>
+                        <input type="number" id="discountPriority" min="0" value="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="discountBadgeText">Texte du badge</label>
+                        <input type="text" id="discountBadgeText" placeholder="Ex: -20%">
+                    </div>
+                    <div class="form-group">
+                        <label for="discountBadgeColor">Couleur du badge</label>
+                        <input type="color" id="discountBadgeColor" value="#FF5733">
+                    </div>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="discountStackable">
+                    <label for="discountStackable">Cumulable avec d'autres réductions</label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="discountStackableWithCoupons" checked>
+                    <label for="discountStackableWithCoupons">Cumulable avec coupons</label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="discountIsActive" checked>
+                    <label for="discountIsActive">Actif</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bundle Modal -->
+    <div id="bundleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="bundleModalTitle">Nouveau Bundle</h3>
+                <button class="close-btn" onclick="closeBundleModal()">&times;</button>
+            </div>
+            <form id="bundleForm">
+                <input type="hidden" id="bundleId">
+                <div class="form-group">
+                    <label for="bundleName">Nom *</label>
+                    <input type="text" id="bundleName" required placeholder="Ex: Achetez 2, recevez 1 gratuit">
+                </div>
+                <div class="form-group">
+                    <label for="bundleDescription">Description</label>
+                    <textarea id="bundleDescription" placeholder="Description de l'offre"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="bundleType">Type *</label>
+                    <select id="bundleType" required onchange="updateBundleFormFields()">
+                        <option value="buy_x_get_y">Achetez X, recevez Y</option>
+                        <option value="bundle_price">Prix fixe du bundle</option>
+                        <option value="bundle_percentage">Pourcentage sur le bundle</option>
+                    </select>
+                </div>
+                <div id="buyXGetYFields">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bundleRequiredQty">Quantité requise *</label>
+                            <input type="number" id="bundleRequiredQty" min="1" value="2">
+                        </div>
+                        <div class="form-group">
+                            <label for="bundleFreeQty">Quantité gratuite *</label>
+                            <input type="number" id="bundleFreeQty" min="1" value="1">
+                        </div>
+                    </div>
+                </div>
+                <div id="bundlePriceField" class="form-group hidden">
+                    <label for="bundlePrice">Prix du bundle *</label>
+                    <input type="number" id="bundlePrice" step="0.01" min="0">
+                </div>
+                <div id="bundlePercentageField" class="form-group hidden">
+                    <label for="bundlePercentage">Pourcentage de réduction *</label>
+                    <input type="number" id="bundlePercentage" step="0.01" min="0" max="100">
+                </div>
+                <div class="form-group">
+                    <label for="bundleProductIds">IDs des produits (séparés par des virgules) *</label>
+                    <input type="text" id="bundleProductIds" required placeholder="uuid1,uuid2,uuid3">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bundlePriority">Priorité</label>
+                        <input type="number" id="bundlePriority" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="bundleBadgeText">Texte du badge</label>
+                        <input type="text" id="bundleBadgeText" placeholder="Ex: 2+1 GRATUIT">
+                    </div>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="bundleAutoApply" checked>
+                    <label for="bundleAutoApply">Application automatique</label>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="bundleIsActive" checked>
+                    <label for="bundleIsActive">Actif</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let token = localStorage.getItem('adminToken');
+        let currentTab = 'coupons';
+
+        // Check if already logged in
+        if (token) {
+            showMainApp();
+        }
+
+        // Login form
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    token = data.data.token;
+                    localStorage.setItem('adminToken', token);
+                    showMainApp();
+                } else {
+                    showError('loginError', data.message);
+                }
+            } catch (error) {
+                showError('loginError', 'Erreur de connexion');
+            }
+        });
+
+        function showMainApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            loadCoupons();
+        }
+
+        function logout() {
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                localStorage.removeItem('adminToken');
+                token = null;
+                document.getElementById('mainApp').classList.add('hidden');
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('loginForm').reset();
+                showAlert('Déconnexion réussie', 'success');
+            }
+        }
+
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 5000);
+        }
+
+        function showAlert(message, type = 'success') {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            document.getElementById('alertContainer').appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+
+                tab.classList.add('active');
+                currentTab = tab.dataset.tab;
+                document.getElementById(`${currentTab}Tab`).classList.remove('hidden');
+
+                if (currentTab === 'coupons') loadCoupons();
+                else if (currentTab === 'discounts') loadDiscounts();
+                else if (currentTab === 'bundles') loadBundles();
+            });
+        });
+
+        // ==================== COUPONS ====================
+        async function loadCoupons() {
+            try {
+                const response = await fetch(`${API_URL}/coupons`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    renderCouponsTable(data.data);
+                }
+            } catch (error) {
+                console.error('Error loading coupons:', error);
+            }
+        }
+
+        function renderCouponsTable(coupons) {
+            const container = document.getElementById('couponsTable');
+
+            if (coupons.length === 0) {
+                container.innerHTML = '<div class="empty-state">Aucun coupon créé</div>';
+                return;
+            }
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Nom</th>
+                            <th>Type</th>
+                            <th>Valeur</th>
+                            <th>Utilisation</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${coupons.map(coupon => `
+                            <tr>
+                                <td><strong>${coupon.code}</strong></td>
+                                <td>${coupon.name}</td>
+                                <td><span class="badge badge-${coupon.type}">${formatCouponType(coupon.type)}</span></td>
+                                <td>${coupon.value}${coupon.type === 'percentage' ? '%' : '€'}</td>
+                                <td>${coupon.usage_count} / ${coupon.usage_limit || '∞'}</td>
+                                <td><span class="badge badge-${coupon.is_active ? 'active' : 'inactive'}">${coupon.is_active ? 'Actif' : 'Inactif'}</span></td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-warning btn-sm" onclick="toggleCouponStatus('${coupon.id}', ${coupon.is_active})">
+                                            ${coupon.is_active ? 'Désactiver' : 'Activer'}
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteCoupon('${coupon.id}')">Supprimer</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        function formatCouponType(type) {
+            const types = {
+                'percentage': 'Pourcentage',
+                'fixed_amount': 'Montant fixe',
+                'free_shipping': 'Livraison gratuite'
+            };
+            return types[type] || type;
+        }
+
+        function showCreateCouponModal() {
+            document.getElementById('couponModalTitle').textContent = 'Nouveau Coupon';
+            document.getElementById('couponForm').reset();
+            document.getElementById('couponId').value = '';
+            document.getElementById('couponModal').classList.add('active');
+        }
+
+        function closeCouponModal() {
+            document.getElementById('couponModal').classList.remove('active');
+        }
+
+        document.getElementById('couponForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const couponData = {
+                code: document.getElementById('couponCode').value.toUpperCase(),
+                name: document.getElementById('couponName').value,
+                description: document.getElementById('couponDescription').value || null,
+                type: document.getElementById('couponType').value,
+                value: parseFloat(document.getElementById('couponValue').value),
+                min_purchase_amount: parseFloat(document.getElementById('couponMinPurchase').value) || 0,
+                max_discount_amount: parseFloat(document.getElementById('couponMaxDiscount').value) || null,
+                usage_limit: parseInt(document.getElementById('couponUsageLimit').value) || null,
+                usage_limit_per_user: parseInt(document.getElementById('couponUserLimit').value) || 1,
+                applies_to: document.getElementById('couponAppliesTo').value,
+                valid_from: document.getElementById('couponValidFrom').value || null,
+                valid_until: document.getElementById('couponValidUntil').value || null,
+                is_active: document.getElementById('couponIsActive').checked
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/coupons`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(couponData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('Coupon créé avec succès');
+                    closeCouponModal();
+                    loadCoupons();
+                } else {
+                    showAlert(data.message || 'Erreur lors de la création', 'error');
+                }
+            } catch (error) {
+                showAlert('Erreur lors de la création', 'error');
+            }
+        });
+
+        async function toggleCouponStatus(id, currentStatus) {
+            try {
+                const response = await fetch(`${API_URL}/coupons/${id}/toggle`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showAlert('Statut mis à jour');
+                    loadCoupons();
+                }
+            } catch (error) {
+                showAlert('Erreur lors de la mise à jour', 'error');
+            }
+        }
+
+        async function deleteCoupon(id) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce coupon ?')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/coupons/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showAlert('Coupon supprimé');
+                    loadCoupons();
+                }
+            } catch (error) {
+                showAlert('Erreur lors de la suppression', 'error');
+            }
+        }
+
+        // ==================== DISCOUNTS ====================
+        async function loadDiscounts() {
+            try {
+                const response = await fetch(`${API_URL}/discounts`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    renderDiscountsTable(data.data);
+                }
+            } catch (error) {
+                console.error('Error loading discounts:', error);
+            }
+        }
+
+        function renderDiscountsTable(discounts) {
+            const container = document.getElementById('discountsTable');
+
+            if (discounts.length === 0) {
+                container.innerHTML = '<div class="empty-state">Aucune réduction créée</div>';
+                return;
+            }
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Type</th>
+                            <th>Valeur</th>
+                            <th>S'applique à</th>
+                            <th>Priorité</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${discounts.map(discount => `
+                            <tr>
+                                <td><strong>${discount.name}</strong></td>
+                                <td><span class="badge badge-${discount.type}">${formatDiscountType(discount.type)}</span></td>
+                                <td>${discount.value}${discount.type === 'percentage' ? '%' : '€'}</td>
+                                <td>${discount.applies_to}</td>
+                                <td>${discount.priority}</td>
+                                <td><span class="badge badge-${discount.is_active ? 'active' : 'inactive'}">${discount.is_active ? 'Actif' : 'Inactif'}</span></td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-warning btn-sm" onclick="toggleDiscountStatus('${discount.id}', ${discount.is_active})">
+                                            ${discount.is_active ? 'Désactiver' : 'Activer'}
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteDiscount('${discount.id}')">Supprimer</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        function formatDiscountType(type) {
+            return type === 'percentage' ? 'Pourcentage' : 'Montant fixe';
+        }
+
+        function showCreateDiscountModal() {
+            document.getElementById('discountModalTitle').textContent = 'Nouvelle Réduction';
+            document.getElementById('discountForm').reset();
+            document.getElementById('discountId').value = '';
+            document.getElementById('discountModal').classList.add('active');
+        }
+
+        function closeDiscountModal() {
+            document.getElementById('discountModal').classList.remove('active');
+        }
+
+        document.getElementById('discountForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const discountData = {
+                name: document.getElementById('discountName').value,
+                description: document.getElementById('discountDescription').value || null,
+                type: document.getElementById('discountType').value,
+                value: parseFloat(document.getElementById('discountValue').value),
+                applies_to: document.getElementById('discountAppliesTo').value,
+                min_quantity: parseInt(document.getElementById('discountMinQuantity').value) || 1,
+                priority: parseInt(document.getElementById('discountPriority').value) || 0,
+                badge_text: document.getElementById('discountBadgeText').value || null,
+                badge_color: document.getElementById('discountBadgeColor').value || null,
+                stackable: document.getElementById('discountStackable').checked,
+                stackable_with_coupons: document.getElementById('discountStackableWithCoupons').checked,
+                is_active: document.getElementById('discountIsActive').checked
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/discounts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(discountData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('Réduction créée avec succès');
+                    closeDiscountModal();
+                    loadDiscounts();
+                } else {
+                    showAlert(data.message || 'Erreur lors de la création', 'error');
+                }
+            } catch (error) {
+                showAlert('Erreur lors de la création', 'error');
+            }
+        });
+
+        async function toggleDiscountStatus(id, currentStatus) {
+            try {
+                const response = await fetch(`${API_URL}/discounts/${id}/toggle`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showAlert('Statut mis à jour');
+                    loadDiscounts();
+                }
+            } catch (error) {
+                showAlert('Erreur lors de la mise à jour', 'error');
+            }
+        }
+
+        async function deleteDiscount(id) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cette réduction ?')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/discounts/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showAlert('Réduction supprimée');
+                    loadDiscounts();
+                }
+            } catch (error) {
+                showAlert('Erreur lors de la suppression', 'error');
+            }
+        }
+
+        // ==================== BUNDLES ====================
+        async function loadBundles() {
+            try {
+                const response = await fetch(`${API_URL}/bundles`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    renderBundlesTable(data.data);
+                }
+            } catch (error) {
+                console.error('Error loading bundles:', error);
+            }
+        }
+
+        function renderBundlesTable(bundles) {
+            const container = document.getElementById('bundlesTable');
+
+            if (bundles.length === 0) {
+                container.innerHTML = '<div class="empty-state">Aucun bundle créé</div>';
+                return;
+            }
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Type</th>
+                            <th>Détails</th>
+                            <th>Priorité</th>
+                            <th>Rachats</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${bundles.map(bundle => `
+                            <tr>
+                                <td><strong>${bundle.name}</strong></td>
+                                <td>${formatBundleType(bundle.type)}</td>
+                                <td>${getBundleDetails(bundle)}</td>
+                                <td>${bundle.priority}</td>
+                                <td>${bundle.current_redemptions} / ${bundle.max_redemptions || '∞'}</td>
+                                <td><span class="badge badge-${bundle.is_active ? 'active' : 'inactive'}">${bundle.is_active ? 'Actif' : 'Inactif'}</span></td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-warning btn-sm" onclick="toggleBundleStatus('${bundle.id}', ${bundle.is_active})">
+                                            ${bundle.is_active ? 'Désactiver' : 'Activer'}
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteBundle('${bundle.id}')">Supprimer</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        function formatBundleType(type) {
+            const types = {
+                'buy_x_get_y': 'Achetez X, recevez Y',
+                'bundle_price': 'Prix fixe',
+                'bundle_percentage': 'Pourcentage'
+            };
+            return types[type] || type;
+        }
+
+        function getBundleDetails(bundle) {
+            if (bundle.type === 'buy_x_get_y') {
+                return `${bundle.required_quantity} + ${bundle.free_quantity} gratuit`;
+            } else if (bundle.type === 'bundle_price') {
+                return `${bundle.bundle_price}€`;
+            } else if (bundle.type === 'bundle_percentage') {
+                return `${bundle.discount_percentage}%`;
+            }
+            return '-';
+        }
+
+        function showCreateBundleModal() {
+            document.getElementById('bundleModalTitle').textContent = 'Nouveau Bundle';
+            document.getElementById('bundleForm').reset();
+            document.getElementById('bundleId').value = '';
+            updateBundleFormFields();
+            document.getElementById('bundleModal').classList.add('active');
+        }
+
+        function closeBundleModal() {
+            document.getElementById('bundleModal').classList.remove('active');
+        }
+
+        function updateBundleFormFields() {
+            const type = document.getElementById('bundleType').value;
+
+            document.getElementById('buyXGetYFields').classList.toggle('hidden', type !== 'buy_x_get_y');
+            document.getElementById('bundlePriceField').classList.toggle('hidden', type !== 'bundle_price');
+            document.getElementById('bundlePercentageField').classList.toggle('hidden', type !== 'bundle_percentage');
+        }
+
+        document.getElementById('bundleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const type = document.getElementById('bundleType').value;
+            const productIds = document.getElementById('bundleProductIds').value
+                .split(',')
+                .map(id => id.trim())
+                .filter(id => id);
+
+            const bundleData = {
+                name: document.getElementById('bundleName').value,
+                description: document.getElementById('bundleDescription').value || null,
+                type: type,
+                product_ids: productIds,
+                priority: parseInt(document.getElementById('bundlePriority').value) || 0,
+                badge_text: document.getElementById('bundleBadgeText').value || null,
+                auto_apply: document.getElementById('bundleAutoApply').checked,
+                is_active: document.getElementById('bundleIsActive').checked
+            };
+
+            if (type === 'buy_x_get_y') {
+                bundleData.required_quantity = parseInt(document.getElementById('bundleRequiredQty').value);
+                bundleData.free_quantity = parseInt(document.getElementById('bundleFreeQty').value);
+            } else if (type === 'bundle_price') {
+                bundleData.bundle_price = parseFloat(document.getElementById('bundlePrice').value);
+            } else if (type === 'bundle_percentage') {
+                bundleData.discount_percentage = parseFloat(document.getElementById('bundlePercentage').value);
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/bundles`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(bundleData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('Bundle créé avec succès');
+                    closeBundleModal();
+                    loadBundles();
+                } else {
+                    showAlert(data.message || 'Erreur lors de la création', 'error');
+                }
+            } catch (error) {
+                showAlert('Erreur lors de la création', 'error');
+            }
+        });
+
+        async function toggleBundleStatus(id, currentStatus) {
+            try {
+                const response = await fetch(`${API_URL}/bundles/${id}/toggle`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showAlert('Statut mis à jour');
+                    loadBundles();
+                }
+            } catch (error) {
+                showAlert('Erreur lors de la mise à jour', 'error');
+            }
+        }
+
+        async function deleteBundle(id) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce bundle ?')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/bundles/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showAlert('Bundle supprimé');
+                    loadBundles();
+                }
+            } catch (error) {
+                showAlert('Erreur lors de la suppression', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

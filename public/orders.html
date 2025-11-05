@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Commandes - Ma Boutique</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success-color: #16a34a;
+            --warning-color: #f59e0b;
+            --danger-color: #dc2626;
+            --info-color: #3b82f6;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --bg-light: #f9fafb;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-lg: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-light);
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        .cart-badge {
+            background: white;
+            color: var(--primary-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .back-btn {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .back-btn:hover {
+            background: var(--bg-light);
+        }
+
+        /* Filters */
+        .filters {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9375rem;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            background: var(--bg-light);
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Orders List */
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .order-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .order-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .order-info {
+            flex: 1;
+        }
+
+        .order-number {
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .order-date {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .order-status {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-processing {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-shipped {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .status-delivered {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .order-body {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .order-items {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+        }
+
+        .order-total {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Order Detail */
+        .order-detail {
+            display: none;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+        }
+
+        .order-detail.active {
+            display: block;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .detail-section:last-child {
+            border-bottom: none;
+        }
+
+        .detail-section-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Order Items Table */
+        .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-items-table th {
+            text-align: left;
+            padding: 0.75rem;
+            background: var(--bg-light);
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .order-items-table td {
+            padding: 1rem 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .order-items-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .item-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .item-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .item-variant {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -1.75rem;
+            top: 0.25rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--border-color);
+        }
+
+        .timeline-item.active .timeline-dot {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .timeline-content {
+            padding-left: 0.5rem;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-date {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state h2 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .btn-primary {
+            padding: 1rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .order-body {
+                grid-template-columns: 1fr;
+            }
+
+            .order-items-table {
+                font-size: 0.875rem;
+            }
+
+            .item-image {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .order-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .order-items-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav {
+                display: flex;
+                gap: 1rem;
+            }
+
+            nav a {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="/index.html" class="logo">Ma Boutique</a>
+            <nav>
+                <a href="/index.html">Accueil</a>
+                <a href="/products.html">Produits</a>
+                <a href="/cart.html">
+                    Panier
+                    <span class="cart-badge" id="cartCount">0</span>
+                </a>
+                <a href="/account.html">Mon Compte</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="page-header">
+            <h1 class="page-title">Mes Commandes</h1>
+            <a href="/account.html" class="back-btn">Retour au compte</a>
+        </div>
+
+        <div id="loadingMessage" class="loading">
+            <p>Chargement des commandes...</p>
+        </div>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">📦</div>
+            <h2>Aucune commande</h2>
+            <p>Vous n'avez pas encore passé de commande</p>
+            <a href="/products.html" class="btn-primary">Voir nos produits</a>
+        </div>
+
+        <div id="ordersView" style="display: none;">
+            <!-- Filters -->
+            <div class="filters">
+                <span class="filter-label">Filtrer par statut:</span>
+                <button class="filter-btn active" onclick="filterOrders('all')">Tous</button>
+                <button class="filter-btn" onclick="filterOrders('pending')">En attente</button>
+                <button class="filter-btn" onclick="filterOrders('processing')">En cours</button>
+                <button class="filter-btn" onclick="filterOrders('shipped')">Expédiée</button>
+                <button class="filter-btn" onclick="filterOrders('delivered')">Livrée</button>
+                <button class="filter-btn" onclick="filterOrders('cancelled')">Annulée</button>
+            </div>
+
+            <!-- Orders List -->
+            <div id="ordersList" class="orders-list"></div>
+        </div>
+
+        <!-- Order Detail -->
+        <div id="orderDetail" class="order-detail"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <p>&copy; 2024 Ma Boutique. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let currentUser = null;
+        let allOrders = [];
+        let filteredOrders = [];
+        let currentFilter = 'all';
+
+        // Status translations
+        const statusLabels = {
+            pending: 'En attente',
+            processing: 'En cours de traitement',
+            shipped: 'Expédiée',
+            delivered: 'Livrée',
+            cancelled: 'Annulée'
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check auth
+            const savedUser = localStorage.getItem('user');
+            if (!savedUser) {
+                alert('Vous devez être connecté pour voir vos commandes');
+                window.location.href = '/account.html';
+                return;
+            }
+
+            currentUser = JSON.parse(savedUser);
+            await loadOrders();
+            updateCartBadge();
+        });
+
+        // Load orders
+        async function loadOrders() {
+            try {
+                const response = await fetch(`${API_URL}/orders`, {
+                    headers: {
+                        'Authorization': `Bearer ${currentUser.token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    allOrders = data.data;
+                    filteredOrders = allOrders;
+
+                    if (allOrders.length === 0) {
+                        showEmptyState();
+                    } else {
+                        renderOrders();
+                        document.getElementById('loadingMessage').style.display = 'none';
+                        document.getElementById('ordersView').style.display = 'block';
+                    }
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('loadingMessage').innerHTML = `
+                    <p style="color: var(--danger-color);">Impossible de charger les commandes</p>
+                `;
+            }
+        }
+
+        // Show empty state
+        function showEmptyState() {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'block';
+        }
+
+        // Filter orders
+        function filterOrders(status) {
+            currentFilter = status;
+
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Filter data
+            if (status === 'all') {
+                filteredOrders = allOrders;
+            } else {
+                filteredOrders = allOrders.filter(order => order.status === status);
+            }
+
+            renderOrders();
+        }
+
+        // Render orders
+        function renderOrders() {
+            const ordersList = document.getElementById('ordersList');
+
+            if (filteredOrders.length === 0) {
+                ordersList.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                        Aucune commande trouvée pour ce filtre
+                    </div>
+                `;
+                return;
+            }
+
+            const html = filteredOrders.map(order => {
+                const itemCount = order.items?.length || 0;
+                const totalItems = order.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+
+                return `
+                    <div class="order-card" onclick="viewOrderDetail('${order.id}')">
+                        <div class="order-header">
+                            <div class="order-info">
+                                <div class="order-number">Commande #${order.order_number}</div>
+                                <div class="order-date">Passée le ${new Date(order.created_at).toLocaleDateString('fr-FR', {
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric'
+                                })}</div>
+                            </div>
+                            <div class="order-status status-${order.status}">
+                                ${statusLabels[order.status] || order.status}
+                            </div>
+                        </div>
+                        <div class="order-body">
+                            <div class="order-items">
+                                ${totalItems} article${totalItems > 1 ? 's' : ''} (${itemCount} produit${itemCount > 1 ? 's' : ''})
+                            </div>
+                            <div class="order-total">
+                                ${parseFloat(order.total_amount).toFixed(2)} €
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            ordersList.innerHTML = html;
+        }
+
+        // View order detail
+        async function viewOrderDetail(orderId) {
+            try {
+                const response = await fetch(`${API_URL}/orders/${orderId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${currentUser.token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    renderOrderDetail(data.data);
+                    document.getElementById('ordersView').style.display = 'none';
+                    document.getElementById('orderDetail').classList.add('active');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Impossible de charger les détails de la commande');
+            }
+        }
+
+        // Render order detail
+        function renderOrderDetail(order) {
+            const detail = document.getElementById('orderDetail');
+
+            // Calculate subtotal
+            const subtotal = order.items.reduce((sum, item) =>
+                sum + (parseFloat(item.price) * item.quantity), 0
+            );
+
+            const html = `
+                <div class="page-header" style="margin-bottom: 2rem;">
+                    <div>
+                        <h2 class="page-title">Commande #${order.order_number}</h2>
+                        <p style="color: var(--text-secondary);">
+                            Passée le ${new Date(order.created_at).toLocaleDateString('fr-FR', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
+                        </p>
+                    </div>
+                    <button class="back-btn" onclick="backToOrders()">Retour aux commandes</button>
+                </div>
+
+                <!-- Order Status -->
+                <div class="detail-section">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <span class="detail-section-title" style="margin: 0;">Statut</span>
+                        <span class="order-status status-${order.status}">
+                            ${statusLabels[order.status] || order.status}
+                        </span>
+                    </div>
+
+                    <div class="timeline">
+                        <div class="timeline-item ${['pending', 'processing', 'shipped', 'delivered', 'cancelled'].includes(order.status) ? 'active' : ''}">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">Commande reçue</div>
+                                <div class="timeline-date">${new Date(order.created_at).toLocaleDateString('fr-FR')}</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item ${['processing', 'shipped', 'delivered'].includes(order.status) ? 'active' : ''}">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">En cours de traitement</div>
+                                <div class="timeline-date">${order.status !== 'pending' && order.status !== 'cancelled' ? new Date(order.updated_at).toLocaleDateString('fr-FR') : '-'}</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item ${['shipped', 'delivered'].includes(order.status) ? 'active' : ''}">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">Expédiée</div>
+                                <div class="timeline-date">${order.status === 'shipped' || order.status === 'delivered' ? new Date(order.updated_at).toLocaleDateString('fr-FR') : '-'}</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item ${order.status === 'delivered' ? 'active' : ''}">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">Livrée</div>
+                                <div class="timeline-date">${order.status === 'delivered' ? new Date(order.updated_at).toLocaleDateString('fr-FR') : '-'}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Address -->
+                <div class="detail-section">
+                    <div class="detail-section-title">Adresse de livraison</div>
+                    <div style="color: var(--text-primary);">
+                        ${order.shipping_address?.name || `${order.user?.first_name} ${order.user?.last_name}`}<br>
+                        ${order.shipping_address?.address_line || order.shipping_address}<br>
+                        ${order.shipping_address?.zip_code || ''} ${order.shipping_address?.city || ''}<br>
+                        ${order.shipping_address?.country || 'France'}
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <div class="detail-section">
+                    <div class="detail-section-title">Produits commandés</div>
+                    <table class="order-items-table">
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Prix unitaire</th>
+                                <th>Quantité</th>
+                                <th style="text-align: right;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${order.items.map(item => {
+                                const itemTotal = parseFloat(item.price) * item.quantity;
+                                const imageUrl = item.product?.images?.[0] ||
+                                    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZjdmYWZjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCIgZmlsbD0iIzcxODA5NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPj88L3RleHQ+PC9zdmc+';
+
+                                return `
+                                    <tr>
+                                        <td>
+                                            <div class="item-info">
+                                                <img src="${imageUrl}" alt="${item.product_name}" class="item-image">
+                                                <div>
+                                                    <div class="item-name">${item.product_name}</div>
+                                                    ${item.variant_name ? `<div class="item-variant">${item.variant_name}</div>` : ''}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>${parseFloat(item.price).toFixed(2)} €</td>
+                                        <td>${item.quantity}</td>
+                                        <td style="text-align: right; font-weight: 600;">${itemTotal.toFixed(2)} €</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="detail-section">
+                    <div class="detail-section-title">Récapitulatif</div>
+                    <div class="detail-row">
+                        <span class="detail-label">Sous-total</span>
+                        <span class="detail-value">${subtotal.toFixed(2)} €</span>
+                    </div>
+                    ${order.discount_amount && parseFloat(order.discount_amount) > 0 ? `
+                        <div class="detail-row">
+                            <span class="detail-label">Réductions</span>
+                            <span class="detail-value" style="color: var(--success-color);">-${parseFloat(order.discount_amount).toFixed(2)} €</span>
+                        </div>
+                    ` : ''}
+                    <div class="detail-row">
+                        <span class="detail-label">Livraison</span>
+                        <span class="detail-value">${order.shipping_cost ? parseFloat(order.shipping_cost).toFixed(2) + ' €' : 'Gratuit'}</span>
+                    </div>
+                    <div class="detail-row" style="padding-top: 1rem; border-top: 2px solid var(--border-color); margin-top: 0.5rem;">
+                        <span class="detail-label" style="font-size: 1.125rem; font-weight: bold; color: var(--text-primary);">Total</span>
+                        <span class="detail-value" style="font-size: 1.5rem; color: var(--primary-color);">${parseFloat(order.total_amount).toFixed(2)} €</span>
+                    </div>
+                </div>
+
+                <!-- Payment Info -->
+                <div class="detail-section" style="border-bottom: none;">
+                    <div class="detail-section-title">Informations de paiement</div>
+                    <div class="detail-row">
+                        <span class="detail-label">Méthode de paiement</span>
+                        <span class="detail-value">${order.payment_method === 'card' ? 'Carte bancaire' : order.payment_method === 'paypal' ? 'PayPal' : 'Virement bancaire'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Statut du paiement</span>
+                        <span class="detail-value">${order.payment_status === 'paid' ? 'Payé' : order.payment_status === 'pending' ? 'En attente' : 'Non payé'}</span>
+                    </div>
+                </div>
+            `;
+
+            detail.innerHTML = html;
+        }
+
+        // Back to orders
+        function backToOrders() {
+            document.getElementById('orderDetail').classList.remove('active');
+            document.getElementById('ordersView').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Update cart badge
+        function updateCartBadge() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+    </script>
+</body>
+</html>
