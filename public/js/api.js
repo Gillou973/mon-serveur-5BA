@@ -5,16 +5,43 @@
 
 const API = {
     /**
-     * Fonction fetch générique avec gestion d'erreurs
+     * Récupérer le token d'authentification
+     */
+    getAuthToken() {
+        return localStorage.getItem('authToken');
+    },
+
+    /**
+     * Définir le token d'authentification
+     */
+    setAuthToken(token) {
+        if (token) {
+            localStorage.setItem('authToken', token);
+        } else {
+            localStorage.removeItem('authToken');
+        }
+    },
+
+    /**
+     * Fonction fetch générique avec gestion d'erreurs et JWT
      */
     async request(endpoint, options = {}) {
         const url = endpoint.startsWith('http') ? endpoint : getEndpoint(endpoint);
 
+        const headers = {
+            'Content-Type': 'application/json',
+            ...options.headers,
+        };
+
+        // Ajouter le token JWT si disponible
+        const token = this.getAuthToken();
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
         const defaultOptions = {
-            headers: {
-                'Content-Type': 'application/json',
-            },
             ...options,
+            headers,
         };
 
         try {
@@ -22,6 +49,10 @@ const API = {
             const data = await response.json();
 
             if (!response.ok) {
+                // Si erreur 401, supprimer le token et rediriger
+                if (response.status === 401) {
+                    this.setAuthToken(null);
+                }
                 throw new Error(data.message || `Erreur HTTP: ${response.status}`);
             }
 
@@ -167,6 +198,10 @@ const API = {
             currentPassword,
             newPassword,
         });
+    },
+
+    async updateUser(userId, userData) {
+        return this.put(`/users/${userId}`, userData);
     },
 
     // === COUPONS ===
